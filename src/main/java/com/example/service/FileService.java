@@ -10,6 +10,6 @@ import java.io.OutputStream;
  */
 public interface FileService {
   void store(FileMetadata metadata, InputStream stream) throws Exception;
-  OutputStream retrieveFile(String id) throws Exception;
+  InputStream retrieveFile(String id) throws Exception;
   FileMetadata retrieveMetadata(String id) throws Exception;
 }

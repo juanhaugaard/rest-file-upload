@@ -44,8 +44,16 @@ public class FileServiceTest {
   public void readFileContentsTest() throws  Exception{
     String contents = String.join("\n", fileContents);
     service.store(metadata, makeInputStream(contents));
-    ByteArrayOutputStream stream = (ByteArrayOutputStream)service.retrieveFile(metadata.getId());
-    String retrieved = new String(stream.toByteArray(), StandardCharsets.UTF_8);
+    InputStream stream = service.retrieveFile(metadata.getId());
+    ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
+    byte[] buf = new byte[8*1024];
+    int n;
+    while ((n = stream.read(buf)) > 0) {
+      contentStream.write(buf, 0, n);
+    }
+    contentStream.flush();
+    String retrieved = new String(contentStream.toByteArray(), StandardCharsets.UTF_8);
+    contentStream.close();
     Assert.assertEquals("Contents should be the same",contents,retrieved);
   }
 

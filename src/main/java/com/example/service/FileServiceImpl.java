@@ -15,16 +15,20 @@ package com.example.service;
 
 import com.example.model.FileMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Created by juan.haugaard on 3/24/2017.
@@ -44,14 +48,12 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
-  public OutputStream retrieveFile(String id) throws Exception {
+  public InputStream retrieveFile(String id) throws Exception {
     if (StringUtils.isEmpty(id))
       throw new IllegalArgumentException("Invalid parameter to retrieveFile");
     FileMetadata metadata = retrieveMetadata(id);
     Path path = FileSystems.getDefault().getPath(FS_ROOT, metadata.getId(), metadata.getFileName());
-    ByteArrayOutputStream ret = new ByteArrayOutputStream();
-    Files.copy(path, ret);
-    return ret;
+    return Files.newInputStream(path, StandardOpenOption.READ);
   }
 
   private void storeMetadata(FileMetadata metadata) throws Exception {
@@ -61,7 +63,7 @@ public class FileServiceImpl implements FileService {
     Files.createDirectories(path.getParent());
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(metadata);
-    Writer writer = Files.newBufferedWriter(path);
+    Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8,StandardOpenOption.CREATE);
     writer.write(json);
     writer.flush();
     writer.close();
