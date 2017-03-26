@@ -30,6 +30,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -47,7 +48,23 @@ public class FileUpload {
     this.service = service;
     logger.debug("FileUpload endpoint constructed");
   }
-
+  
+  @GET
+  @Path("/")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAllPublicationMetadata() {
+    logger.trace("getAllPublicationMetadata()");
+    try {
+      Collection<FileMetadata> ret = service.retrieveAllMetadata();
+      return Response.ok().entity(ret).build();
+    }
+    catch (Exception e) {
+      logger.error("Exception processing GET All Publications metadata", e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+  
+  
   @POST
   @Path("/")
   @Consumes(MediaType.MULTIPART_FORM_DATA)

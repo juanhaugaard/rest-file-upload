@@ -50,7 +50,7 @@ public class FileMetadata {
   public void addAuthor(String author) {
     if (StringUtils.isEmpty(author))
       return;
-    this.authors.add(author);
+    this.authors.add(author.trim());
   }
 
   public void addAuthors(String authorList) {

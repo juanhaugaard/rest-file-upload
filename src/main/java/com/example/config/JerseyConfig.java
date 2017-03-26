@@ -22,7 +22,7 @@ public class JerseyConfig extends ResourceConfig {
     logger.info("Registering Jersey REST components");
     ApplicationPath annotation = JerseyConfig.class.getAnnotation(ApplicationPath.class);
     logger.info("Configured REST root path:'{}'", annotation.value());
-    // register our REST endpoint(s)
+    // register our REST endpoint
     register(FileUpload.class);
     // register Filter(s)
     register(DiagnosticContextFilter.class);
