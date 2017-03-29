@@ -1,9 +1,16 @@
 package com.example.service;
 
+import com.example.FileUploadRestMain;
 import com.example.model.FileMetadata;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +22,11 @@ import java.util.Date;
 /**
  * Created by juan.haugaard on 3/24/2017.
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = FileUploadRestMain.class)
+@WebAppConfiguration
 public class FileServiceTest {
+  @Autowired
   private FileService service;
   private FileMetadata metadata;
   private String[] fileContents ={"Line One","Line Two","Line Three","Line Four"};
@@ -23,7 +34,6 @@ public class FileServiceTest {
   @Before
   public void setup() {
     metadata = makeMetadata("Publication Title","publication.doc","Author One", "Author Two");
-    service = new FileServiceImpl();
   }
 
   @Test
@@ -44,8 +54,16 @@ public class FileServiceTest {
   public void readFileContentsTest() throws  Exception{
     String contents = String.join("\n", fileContents);
     service.store(metadata, makeInputStream(contents));
-    ByteArrayOutputStream stream = (ByteArrayOutputStream)service.retrieveFile(metadata.getId());
-    String retrieved = new String(stream.toByteArray(), StandardCharsets.UTF_8);
+    InputStream stream = service.retrieveFile(metadata.getId());
+    ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
+    byte[] buf = new byte[8*1024];
+    int n;
+    while ((n = stream.read(buf)) > 0) {
+      contentStream.write(buf, 0, n);
+    }
+    contentStream.flush();
+    String retrieved = new String(contentStream.toByteArray(), StandardCharsets.UTF_8);
+    contentStream.close();
     Assert.assertEquals("Contents should be the same",contents,retrieved);
   }
 

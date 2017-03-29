@@ -1,36 +1,46 @@
 package com.example;
 
-import com.example.config.JerseyConfig;
-import com.example.service.FileService;
-import com.example.service.FileServiceImpl;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+
+import org.h2.server.web.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
+import com.example.config.JerseyConfig;
 
 /**
  * Created by juan.haugaard on 3/24/2017.
  */
 @SpringBootApplication
+@EntityScan(basePackages = {"com.example.jpa"})
+@EnableJpaRepositories(basePackages = {"com.example.jpa"})
+@EnableTransactionManagement
 public class FileUploadRestMain extends SpringBootServletInitializer {
   private final Logger logger = LoggerFactory.getLogger(FileUploadRestMain.class);
+  
   public static void main(String[] args) {
     SpringApplication.run(FileUploadRestMain.class, args);
   }
+  
   @Override
   protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
     logger.info("**** #### Main.configure called #### ****");
     return super.configure(builder);
   }
+  
   /*****************
    * BootStrap environment report
    ****************/
@@ -64,11 +74,14 @@ public class FileUploadRestMain extends SpringBootServletInitializer {
   }
 
   @Bean
-  public FileService makeFileService() {return new FileServiceImpl(); }
-
-  @Bean
   public JerseyConfig configureJersey() {
     return new JerseyConfig();
   }
-
+  
+  @Bean
+  ServletRegistrationBean h2servletRegistration(){
+      ServletRegistrationBean registrationBean = new ServletRegistrationBean(new WebServlet());
+      registrationBean.addUrlMappings("/console/*");
+      return registrationBean;
+  }
 }

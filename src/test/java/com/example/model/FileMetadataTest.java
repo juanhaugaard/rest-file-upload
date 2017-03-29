@@ -64,6 +64,18 @@ public class FileMetadataTest {
   }
 
   @Test
+  public void testAddAuthorTwoAndBlank() {
+    String[] authors = {"First Author","","Third Author"};
+    metadata.addAuthor(authors[0]);
+    metadata.addAuthor(authors[1]);
+    metadata.addAuthor(authors[2]);
+    Assert.assertNotNull(metadata.getAuthors());
+    Assert.assertEquals("Authors should have two authors",2, metadata.getAuthors().size());
+    Assert.assertEquals("Wrong first author",authors[0], metadata.getAuthors().toArray()[0]);
+    Assert.assertEquals("Wrong second author",authors[2], metadata.getAuthors().toArray()[1]);
+  }
+
+  @Test
   public void testAddAuthorThree() {
     String[] authors = {"First Author","Second Author","Third Author"};
     metadata.addAuthor(authors[0]);
