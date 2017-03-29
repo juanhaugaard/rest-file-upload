@@ -1,16 +1,3 @@
-/**
- * This computer program is protected by United States copyright law and
- * international treaties. Unauthorized distribution or reproduction of this
- * computer program, or any portion of it, is strictly prohibited, may result in
- * severe civil penalties and criminal penalties, and will be prosecuted to the
- * maximum extent of the law. In addition, this computer program, portions of
- * this program, and the associated functionality may be considered a trade
- * secret. Unauthorized disclosure, reproduction, or distribution of the
- * computer program, or any portion of it, will be prosecuted to the maximum
- * extent of the law.
- * <p>
- * Copyright 2017 S&C Electric Company.
- */
 package com.example.service;
 
 import com.example.model.FileMetadata;
